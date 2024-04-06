@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-br">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -11,8 +11,19 @@
     <title>Login</title>
   </head>
   <body>
-    <h1>Login</h1>
+    <div class="container">
+      <form action="{% url 'login_cliente' %}" method="get">
+        <label for="">Email:</label>
+        <input class="form-control m-3" required type="text" name="email" id="">
 
+        <label for="">Senha:</label>
+        <input class="form-control m-3" required type="text" name="senha" id="">
+        <input class="btn btn-success m-3"  type="submit" value="Logar">
+      </form>
+      {% if correct == False %}
+        <h1>Digite o email e senha corretamente</h1>
+      {% endif %}
+    </div>
     
 
 
