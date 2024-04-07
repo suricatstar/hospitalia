@@ -12,16 +12,19 @@
   </head>
   <body>
     <div class="container">
-      <form action="{% url 'login_cliente' %}" method="get">
-        <label for="">Email:</label>
-        <input class="form-control m-3" required type="text" name="email" id="">
+      {% if confir %}
+      <p>{{confir}}</p>
+      {% endif %}
+      <form action="{% url 'login_cliente' %}" method="POST"> {% csrf_token %}
+        <label for="">Nome:</label>
+        <input class="form-control m-3" required type="text" name="nome" id="">
 
         <label for="">Senha:</label>
         <input class="form-control m-3" required type="text" name="senha" id="">
         <input class="btn btn-success m-3"  type="submit" value="Logar">
       </form>
       {% if correct == False %}
-        <h1>Digite o email e senha corretamente</h1>
+        <h1>Digite seu nome e senha corretamente</h1>
       {% endif %}
     </div>
     

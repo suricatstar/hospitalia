@@ -13,7 +13,7 @@
   <body>
     <div class="container d-flex justify-content-center"> 
 
-        <form action="/cadastro/cadastrar_cliente/" method="POST"> {% csrf_token %}
+        <form action="{% url 'cadastrar_cliente'%}" method="POST"> {% csrf_token %}
             <label for="">Nome:</label>
             <input class="form-control m-3" type="text" name="nome" id="" required>
 

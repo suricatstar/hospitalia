@@ -1,6 +1,9 @@
 from django.shortcuts import render,redirect
 from .models import Cliente
 from django.http import HttpResponse
+from django.contrib.auth.models import User #importa o model user
+from django.contrib.auth import authenticate,login #importa a funcao autenticate e o login
+
 from django.urls import reverse
 
 # Create your views here.
@@ -15,37 +18,46 @@ def cadastrarCliente(request):
         senhaC = request.POST.get('senha')
         numC = request.POST.get('numero')
         
-        cliente = Cliente(
-            nome=nomeC,
-            cpf=cpfC,
-            idade=idadeC,
-            email=emailC,
-            numero=numC,
-            senha=senhaC
-        )
+        user = User.objects.filter(email=emailC).first() 
         
-        cliente.save()
-        return redirect(reverse('login_cliente'))
+        if not user:
+            user = User.objects.create_user(username=nomeC, email=emailC,password=senhaC)
+            
+            cliente = Cliente(
+                nome=nomeC,
+                cpf=cpfC,
+                idade=idadeC,
+                email=emailC,
+                numero=numC,
+                senha=senhaC
+            )
+            user.save()
+            cliente.save()
+            return redirect(reverse('login_cliente'))
+        else:
+            confir= 'já existe usuário com esse email, tente logar'
+            return render(request, 'login.html', {'confir': confir})
 
 def loginCliente(request):
-    emailL = request.GET.get('email')
-    senhaL = request.GET.get('senha')
-    correct = True
-    
-    print(request)
-    print(emailL,senhaL)
-    
-    if emailL and senhaL:
-    
-        cliente = Cliente.objects.all()
-        try:
-            if cliente.filter(email=emailL).exists() and cliente.filter(senha=senhaL).exists():
-                return HttpResponse(f'{emailL}-{senhaL}')
-            
-            else:    
-                correct = False
-                return render(request, 'login.html',{'correct': correct})
-        except:
-            return HttpResponse('estamos com problema no servidor')
-    else:        
-        return render(request, 'login.html')
+    if request.method == "GET":
+        return render(request,'login.html')
+    else:
+        nomeL = request.POST.get('nome')
+        senhaL = request.POST.get('senha')
+        correct = True
+        
+        if nomeL and senhaL:
+            user = authenticate(username=nomeL, password=senhaL)
+            try:
+                if user:
+                    login(request, user)
+                    return redirect(reverse('consultas'))
+                
+                else:    
+                    correct = False
+                    return render(request, 'login.html',{'correct': correct})
+            except:
+                return HttpResponse('estamos com problema no servidor')
+        else:        
+            return render(request, 'login.html')
+        
