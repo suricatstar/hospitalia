@@ -22,6 +22,7 @@
         <label for="">Senha:</label>
         <input class="form-control m-3" required type="text" name="senha" id="">
         <input class="btn btn-success m-3"  type="submit" value="Logar">
+        <a class="btn btn-primary" href="{% url 'cadastrar_cliente' %}">Cadastrar</a>
       </form>
       {% if correct == False %}
         <h1>Digite seu nome e senha corretamente</h1>

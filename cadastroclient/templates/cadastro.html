@@ -12,7 +12,9 @@
   </head>
   <body>
     <div class="container d-flex justify-content-center"> 
-
+      {% if context %}
+        <p>{{context}}</p>
+      {% endif %}
         <form action="{% url 'cadastrar_cliente'%}" method="POST"> {% csrf_token %}
             <label for="">Nome:</label>
             <input class="form-control m-3" type="text" name="nome" id="" required>
@@ -33,6 +35,7 @@
             <input class="form-control m-3" type="number" name="numero" id="">
 
             <input class="btn btn-success m-3" type="submit" value="Cadastrar">
+            <a class="btn btn-primary" href="{% url 'login_cliente' %}">login</a>
         </form>
     </div>
 

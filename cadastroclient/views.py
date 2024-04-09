@@ -60,4 +60,3 @@ def loginCliente(request):
                 return HttpResponse('estamos com problema no servidor')
         else:        
             return render(request, 'login.html')
-        
