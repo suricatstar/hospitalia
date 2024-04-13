@@ -11,29 +11,14 @@
     <title>Cadastrar cliente</title>
   </head>
   <body>
+    
     <div class="container d-flex justify-content-center"> 
       {% if context %}
         <p>{{context}}</p>
       {% endif %}
         <form action="{% url 'cadastrar_cliente'%}" method="POST"> {% csrf_token %}
-            <label for="">Nome:</label>
-            <input class="form-control m-3" type="text" name="nome" id="" required>
-
-            <label for="">Cpf:</label>
-            <input class="form-control m-3" type="number" name="cpf" id="" required>
-
-            <label for="">Idade:</label>
-            <input class="form-control m-3" type="number" name="idade" id="" required>
-
-            <label for="">Email:</label>
-            <input required class="form-control m-3" type="text" name="email" id="">
-
-            <label for="">Senha:</label>
-            <input required class="form-control m-3" type="text" name="senha" id="">
-
-            <label for="">Número:</label>
-            <input class="form-control m-3" type="number" name="numero" id="">
-
+            {{form}}
+  
             <input class="btn btn-success m-3" type="submit" value="Cadastrar">
             <a class="btn btn-primary" href="{% url 'login_cliente' %}">login</a>
         </form>

@@ -5,58 +5,71 @@ from django.contrib.auth.models import User #importa o model user
 from django.contrib.auth import authenticate,login #importa a funcao autenticate e o login
 
 from django.urls import reverse
+from .forms import formularioCadastro,formularioLogin
 
 # Create your views here.
 def cadastrarCliente(request):
     if request.method == "GET":
-        return render(request, 'cadastro.html')
+        form = formularioCadastro()
+        return render(request, 'cadastro.html', {'form': form})
     elif request.method == "POST":
-        nomeC = request.POST.get('nome')
-        cpfC = request.POST.get('cpf')
-        idadeC = request.POST.get('idade')
-        emailC = request.POST.get('email')
-        senhaC = request.POST.get('senha')
-        numC = request.POST.get('numero')
-        
-        user = User.objects.filter(email=emailC).first() 
-        
-        if not user:
-            user = User.objects.create_user(username=nomeC, email=emailC,password=senhaC)
+        form = formularioCadastro(request.POST)
+        if form.is_valid():
+            nomeC = form.cleaned_data['nome']
+            cpfC = form.cleaned_data['cpf']
+            idadeC = form.cleaned_data['idade']
+            emailC = form.cleaned_data['email']
+            senhaC = form.cleaned_data['senha']
+            numC = form.cleaned_data['numero']
             
-            cliente = Cliente(
-                nome=nomeC,
-                cpf=cpfC,
-                idade=idadeC,
-                email=emailC,
-                numero=numC,
-                senha=senhaC
-            )
-            user.save()
-            cliente.save()
-            return redirect(reverse('login_cliente'))
+            
+            user = User.objects.filter(email=emailC).first() 
+            
+            #talvez dê para usar o forms.model
+            if not user:
+                user = User.objects.create_user(username=nomeC, email=emailC,password=senhaC)
+                
+                cliente = Cliente(
+                    nome=nomeC,
+                    cpf=cpfC,
+                    idade=idadeC,
+                    email=emailC,
+                    numero=numC,
+                    senha=senhaC
+                )
+                user.save()
+                cliente.save()
+                
+                return redirect(reverse('login_cliente'))
+            else:
+                confir= 'já existe usuário com esse email, tente logar'
+                return render(request, 'login.html', {'confir': confir})
         else:
-            confir= 'já existe usuário com esse email, tente logar'
-            return render(request, 'login.html', {'confir': confir})
+            return render(request, 'cadastro.html', {'form': form})
 
 def loginCliente(request):
     if request.method == "GET":
-        return render(request,'login.html')
+        form = formularioLogin()
+        return render(request,'login.html', {'form': form})
     else:
-        nomeL = request.POST.get('nome')
-        senhaL = request.POST.get('senha')
-        correct = True
+        form = formularioLogin(request.POST)
+        if form.is_valid():
+            nomeL = form.cleaned_data['nome']
+            senhaL = form.cleaned_data['senha']
+            correct = True
+            
+            if nomeL and senhaL:
+                user = authenticate(username=nomeL, password=senhaL)
+                try:
+                    if user:
+                        login(request, user)
+                        return redirect(reverse('consultas'))
+                    
+                    else:    
+                        correct = False
+                        return render(request, 'login.html',{'correct': correct,'form': form})
+                except:
+                    return HttpResponse('estamos com problema no servidor')
+            else:        
+                return render(request, 'login.html', {'form': form})
         
-        if nomeL and senhaL:
-            user = authenticate(username=nomeL, password=senhaL)
-            try:
-                if user:
-                    login(request, user)
-                    return redirect(reverse('consultas'))
-                
-                else:    
-                    correct = False
-                    return render(request, 'login.html',{'correct': correct})
-            except:
-                return HttpResponse('estamos com problema no servidor')
-        else:        
-            return render(request, 'login.html')

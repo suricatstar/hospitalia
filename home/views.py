@@ -26,6 +26,7 @@ class ConsultaCreateView(LoginRequiredMixin ,CreateView):
     
     def form_valid(self, form):
         
+        # Define o usuário atual como o usuário associado ao agendamento
         form.instance.user = self.request.user
         return super().form_valid(form)
     
