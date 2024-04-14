@@ -4,6 +4,7 @@ from django.contrib.auth import logout
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Agenda
+from .forms import formularioAgenda
 
 # Create your views here.
 
@@ -16,12 +17,8 @@ class AgendaListView(LoginRequiredMixin,ListView):
 
 class ConsultaCreateView(LoginRequiredMixin ,CreateView):
     model = Agenda
-    fields= [
-        "exame",
-        "medico",
-        "horario",
-        "consulData",
-    ]
+    form_class = formularioAgenda 
+    # lembrar de deixar o nome FORM_CLASS
     success_url = reverse_lazy('agenda')
     
     def form_valid(self, form):
